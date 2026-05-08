@@ -149,29 +149,12 @@ body{padding-bottom:48px}
 .edit-list-label{font-size:11px;font-weight:700;color:var(--text2);margin-bottom:5px;display:flex;align-items:center;gap:4px}
 .edit-task-list{display:flex;flex-direction:column;gap:4px;margin-bottom:8px}
 .edit-row{display:flex;align-items:center;gap:8px;padding:9px 10px;border-radius:var(--radius-sm);background:var(--bg);border:1px solid var(--border);touch-action:none;user-select:none;-webkit-user-select:none}
-.edit-row.dragging{opacity:0.4;border-color:var(--pink-border);background:var(--pink-light)}
-.edit-row.drag-over{border-color:var(--pink);background:var(--pink-light);transform:scale(1.01)}
-.drag-handle{color:var(--text3);font-size:18px;cursor:grab;flex-shrink:0;line-height:1;padding:0 2px}
-.drag-handle:active{cursor:grabbing}
 .edit-row-name{flex:1;font-size:12px;font-weight:500;color:var(--text);line-height:1.2}
 .edit-row-sub{font-size:10px;color:var(--text3);flex-shrink:0;margin-right:4px}
 .edit-del{width:26px;height:26px;border-radius:50%;background:#FEE2E2;border:none;color:#DC2626;font-size:15px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all 0.1s}
 .edit-del:active{transform:scale(0.88);background:#FECACA}
 
-/* PIN MODAL */
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:1000;display:none;align-items:center;justify-content:center;padding:20px}
-.modal-overlay.show{display:flex}
-.modal{background:var(--card);border-radius:20px;padding:24px;width:100%;max-width:320px;text-align:center}
-.modal-title{font-family:'Baloo 2',cursive;font-size:18px;font-weight:800;color:var(--text);margin-bottom:6px}
-.modal-sub{font-size:12px;color:var(--text2);margin-bottom:16px}
-.modal-pin{display:flex;gap:8px;justify-content:center;margin-bottom:16px}
-.pin-dot{width:14px;height:14px;border-radius:50%;background:#fce8f0;border:2px solid var(--pink-border);transition:all 0.15s}
-.pin-dot.filled{background:var(--pink);border-color:var(--pink)}
-.pin-pad{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-.pin-btn{height:52px;border-radius:12px;border:1.5px solid var(--border);background:var(--bg);font-family:'Baloo 2',cursive;font-size:20px;font-weight:700;color:var(--text);cursor:pointer;transition:all 0.12s}
-.pin-btn:active{background:var(--pink-light);transform:scale(0.94)}
-.modal-err{font-size:12px;color:var(--red);margin-top:8px;height:16px}
-.modal-close{margin-top:12px;font-size:12px;color:var(--text3);cursor:pointer;text-decoration:underline}
+
 
 /* THEME DRAWER */
 .theme-drawer{position:fixed;bottom:0;left:0;right:0;background:var(--card);border-radius:20px 20px 0 0;padding:16px 16px 32px;z-index:300;transform:translateY(100%);transition:transform 0.3s cubic-bezier(.4,0,.2,1);box-shadow:0 -4px 20px rgba(0,0,0,0.1)}
@@ -211,23 +194,7 @@ body{padding-bottom:48px}
 <canvas id="confettiCanvas"></canvas>
 <div class="toast-el" id="toastEl"><span id="toastIcon">⭐</span><div><div id="toastTitle" style="font-family:Baloo 2,cursive;font-weight:700;font-size:13px;color:var(--pink)"></div><div id="toastSub" style="font-size:11px;color:#6b7280;margin-top:1px"></div></div></div>
 
-<!-- PIN Modal -->
-<div class="modal-overlay" id="lockModal">
-  <div class="modal">
-    <div class="modal-title">🔒 부모 설정 모드</div>
-    <div class="modal-sub" id="lockModalSub">PIN 4자리를 입력해주세요</div>
-    <div class="modal-pin" id="pinDots"><div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div></div>
-    <div class="pin-pad">
-      <button class="pin-btn" onclick="pinInput('1')">1</button><button class="pin-btn" onclick="pinInput('2')">2</button><button class="pin-btn" onclick="pinInput('3')">3</button>
-      <button class="pin-btn" onclick="pinInput('4')">4</button><button class="pin-btn" onclick="pinInput('5')">5</button><button class="pin-btn" onclick="pinInput('6')">6</button>
-      <button class="pin-btn" onclick="pinInput('7')">7</button><button class="pin-btn" onclick="pinInput('8')">8</button><button class="pin-btn" onclick="pinInput('9')">9</button>
-      <button class="pin-btn" style="visibility:hidden"></button><button class="pin-btn" onclick="pinInput('0')">0</button>
-      <button class="pin-btn" style="font-size:16px;color:var(--text2)" onclick="pinDelete()">⌫</button>
-    </div>
-    <div class="modal-err" id="pinErr"></div>
-    <div class="modal-close" onclick="closeLockModal()">취소</div>
-  </div>
-</div>
+
 
 <!-- Theme drawer -->
 <div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
@@ -252,7 +219,6 @@ body{padding-bottom:48px}
       <div class="app-title" id="appTitle">To do list for Ella ♥</div>
     </div>
     <div class="header-actions">
-      <button class="icon-btn" id="lockBtn" onclick="openLockModal()">🔒</button>
       <button class="icon-btn" id="editBtn" onclick="toggleEdit()" style="display:none">✏️</button>
       <div class="mode-tabs">
         <button class="mode-tab active" id="tabWeek" onclick="setMode('week')">주간</button>
@@ -267,7 +233,7 @@ body{padding-bottom:48px}
   </div>
 </div>
 
-<div id="editBanner" class="edit-banner"><span style="font-size:15px">✏️</span><span class="edit-banner-txt">항목을 꾹 누르면 삭제 버튼이 나타나요 · 드래그로 순서 변경</span></div>
+<div id="editBanner" class="edit-banner"><span style="font-size:15px">✏️</span><span class="edit-banner-txt">✕ 버튼을 눌러 일정을 개별 삭제할 수 있어요</span></div>
 <div id="weekBanner" class="week-banner"><div class="banner-text">🎊 이번 주 모두 완료! 폭죽 발사! 🎉</div></div>
 <div class="prog-wrap"><span class="prog-label" id="progLabel">이번 주 달성률</span><div class="prog-track"><div class="prog-fill" id="progFill" style="width:0%"></div></div><span class="prog-pct" id="progPct">0%</span></div>
 
@@ -329,13 +295,13 @@ function getBunnySVG(size){
 // ── FROZEN OST (요일별 고정) ──
 // 0=월 1=화 2=수 3=목 4=금 5=토 6=일
 const FROZEN_OST_BY_DAY = [
-  {title:'Into the Unknown 🌌', ytmId:'jp-CVTzCbAU'},
-  {title:'Let It Go ❄️',       ytmId:'L0MK7qz13bU'},
-  {title:'Love Is an Open Door 💛', ytmId:'MOldBEkE9fY'},
-  {title:'Do You Want to Build a Snowman? ⛄', ytmId:'tLGBqmPABDY'},
-  {title:'Some Things Never Change 🍂', ytmId:'3e6qeA6FQJU'},
-  {title:"Reindeer(s) Are Better Than People 🦌", ytmId:'rLNJwdS81Lk'},
-  {title:'Show Yourself ✨',    ytmId:'Q6GBPyaJNNw'},
+  {title:'Into the Unknown 🌌',                   url:'https://music.youtube.com/watch?v=dzGxTj3WoAA&si=BIbn1aM4vftEod5w'},
+  {title:'Let It Go ❄️',                          url:'https://music.youtube.com/watch?v=Jf5VVKZVpb8&si=Fc4khXHul8P7W8nb'},
+  {title:'Love Is an Open Door 💛',               url:'https://music.youtube.com/watch?v=qSU560anReg&si=Crq-m1_8wddrQ9eK'},
+  {title:'Do You Want to Build a Snowman? ⛄',    url:'https://music.youtube.com/watch?v=0ZC54hoNmVY&si=9tWCW74aviXR9NFL'},
+  {title:'Some Things Never Change 🍂',           url:'https://music.youtube.com/watch?v=hUcrAG1dI98&si=42nlL9Wnq0yY4mMw'},
+  {title:'Reindeer(s) Are Better Than People 🦌', url:'https://music.youtube.com/watch?v=2y0vnagyGiI&si=ZvIskvNqtYTLWloh'},
+  {title:'Show Yourself ✨',                      url:'https://music.youtube.com/watch?v=2qPlX1FMJXI&si=qs65bHaj9klyuozI'},
 ];
 
 // ── CONSTANTS ──
@@ -374,8 +340,6 @@ let recurring=JSON.parse(localStorage.getItem('ella_rec')||'null')||JSON.parse(J
 let oneoffs=JSON.parse(localStorage.getItem('ella_one')||'[]');
 let checks=JSON.parse(localStorage.getItem('ella_chk')||'{}');
 let badges=JSON.parse(localStorage.getItem('ella_badges')||'[]');
-let parentPin=localStorage.getItem('ella_pin')||'';
-let isParentUnlocked=false;
 let currentTheme=localStorage.getItem('ella_theme')||'pink';
 let profileName=localStorage.getItem('ella_pname')||'Ella';
 let profileImg=localStorage.getItem('ella_pimg')||'';
@@ -467,17 +431,11 @@ function updateProfileUI(){
 }
 
 // ── PIN ──
-function openLockModal(){pinBuffer='';pinAction=parentPin?'verify':'set';document.getElementById('lockModalSub').textContent=parentPin?'PIN을 입력해주세요':'새 PIN 4자리를 설정해주세요';document.getElementById('pinErr').textContent='';updatePinDots();document.getElementById('lockModal').classList.add('show');}
-function closeLockModal(){document.getElementById('lockModal').classList.remove('show');pinBuffer='';}
-function pinInput(d){
-  if(pinBuffer.length>=4)return;pinBuffer+=d;updatePinDots();
-  if(pinBuffer.length===4){setTimeout(function(){
-    if(pinAction==='set'){parentPin=pinBuffer;localStorage.setItem('ella_pin',parentPin);isParentUnlocked=true;document.getElementById('lockBtn').textContent='🔓';closeLockModal();document.getElementById('addPanels').style.display='flex';}
-    else if(pinAction==='verify'){if(pinBuffer===parentPin){isParentUnlocked=true;document.getElementById('lockBtn').textContent='🔓';closeLockModal();document.getElementById('addPanels').style.display='flex';}else{document.getElementById('pinErr').textContent='PIN이 틀렸어요.';pinBuffer='';updatePinDots();}}
-  },200);}
-}
-function pinDelete(){if(pinBuffer.length>0){pinBuffer=pinBuffer.slice(0,-1);updatePinDots();}}
-function updatePinDots(){document.querySelectorAll('.pin-dot').forEach(function(d,i){d.classList.toggle('filled',i<pinBuffer.length);});}
+
+
+
+
+
 
 // ── UTILS ──
 function getMonday(d){var dt=new Date(d),day=dt.getDay();dt.setDate(dt.getDate()+(day===0?-6:1-day));dt.setHours(0,0,0,0);return dt;}
@@ -563,16 +521,46 @@ function renderWeek(){
         var k=ck(dd.isoStr,t.id);
         var done=!!checks[k];
         cell.className='task-cell'+(done?' checked':'');
-        cell.innerHTML='<div class="cell-check"><div class="check-mark"></div></div><div class="cell-name">'+t.name+'</div>';
-        // Capture variables for closure
+        // Build cell content
+        var chkDiv=document.createElement('div');chkDiv.className='cell-check';
+        chkDiv.innerHTML='<div class="check-mark"></div>';
+        var nameDiv=document.createElement('div');nameDiv.className='cell-name';nameDiv.textContent=t.name;
+        cell.appendChild(chkDiv);cell.appendChild(nameDiv);
+        // X delete button (shown in edit mode)
+        if(editMode){
+          var xBtn=document.createElement('button');
+          xBtn.style.cssText='position:absolute;top:2px;right:2px;width:16px;height:16px;border-radius:50%;background:#DC2626;border:none;color:#fff;font-size:10px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;padding:0;z-index:2';
+          xBtn.textContent='✕';
+          (function(taskObj,isoStr2,dow2){
+            xBtn.onclick=function(e){
+              e.stopPropagation();
+              if(taskObj.recurring){
+                // Delete only this day from this recurring task
+                var rec=recurring.find(function(r){return r.name===taskObj.rname;});
+                if(rec){
+                  rec.days=rec.days.filter(function(d2){return d2!==dow2;});
+                  if(rec.days.length===0) recurring=recurring.filter(function(r){return r.name!==taskObj.rname;});
+                }
+              } else {
+                oneoffs=oneoffs.filter(function(o){return o.oid!==taskObj.oid;});
+              }
+              // Clear check for this task
+              delete checks[ck(isoStr2,taskObj.id)];
+              save();render();
+              if(editMode)renderManageLists();
+            };
+          })(t,dd.isoStr,d);
+          cell.appendChild(xBtn);
+        }
+        // Click handler (check/uncheck) — only when not in edit mode
         (function(taskObj,isoStr,dayIdx,tasks){
-          cell.onclick=function(){
+          cell.onclick=function(e){
+            if(editMode)return;
             var k2=ck(isoStr,taskObj.id);
             checks[k2]=!checks[k2];
             if(checks[k2]){sfxCheck();}else{sfxUncheck();}
             save();checkBadges();
             if(checks[k2]){
-              // Check if this day is now complete
               var allDone=tasks.length>0&&tasks.every(function(tx){return !!checks[ck(isoStr,tx.id)];});
               if(allDone){
                 var dayKey=isoStr;
@@ -612,9 +600,10 @@ function showDayCompletePopup(dayIdx,isoStr){
   launchConfetti();
   var song=FROZEN_OST_BY_DAY[dayIdx];
   var isAndroid=/android/i.test(navigator.userAgent);
-  var href=isAndroid
-    ?'intent://music.youtube.com/watch?v='+song.ytmId+'#Intent;scheme=https;package=com.google.android.apps.youtube.music;S.browser_fallback_url='+encodeURIComponent('https://music.youtube.com/watch?v='+song.ytmId)+';end'
-    :'https://music.youtube.com/watch?v='+song.ytmId;
+  var videoId=song.url.match(/[?&]v=([^&]+)/);videoId=videoId?videoId[1]:'';
+  var href=isAndroid&&videoId
+    ?'intent://music.youtube.com/watch?v='+videoId+'#Intent;scheme=https;package=com.google.android.apps.youtube.music;S.browser_fallback_url='+encodeURIComponent(song.url)+';end'
+    :song.url;
 
   var overlay=document.createElement('div');
   overlay.style.cssText='position:fixed;inset:0;background:rgba(10,10,50,0.75);z-index:6000;display:flex;align-items:center;justify-content:center;padding:22px';
@@ -769,9 +758,7 @@ function renderManageLists(){
   renderOneoffList();
 }
 
-// ── RECURRING LIST with drag-and-drop ──
-var _dragIdx=null,_dragEl=null,_touchTarget=null;
-
+// ── RECURRING LIST (no drag) ──
 function renderRecurringList(){
   var list=document.getElementById('recurringList');
   if(!list)return;
@@ -782,55 +769,16 @@ function renderRecurringList(){
   recurring.forEach(function(task,idx){
     var row=document.createElement('div');
     row.className='edit-row';
-    row.setAttribute('data-idx',idx);
-    row.draggable=true;
-    row.innerHTML='<div class="drag-handle">⠿</div>'
-      +'<div class="edit-row-name">'+task.name+'</div>'
+    row.innerHTML='<div class="edit-row-name">'+task.name+'</div>'
       +'<div class="edit-row-sub">'+task.days.map(function(d){return DAY_KR[d];}).join(' ')+'</div>'
       +'<button class="edit-del">✕</button>';
-    // Delete: only this specific recurring entry (all days)
     row.querySelector('.edit-del').onclick=function(e){
       e.stopPropagation();
-      if(confirm('"'+task.name+'" 반복 일정을 삭제할까요?')){
+      if(confirm('"'+task.name+'" 반복 일정을 삭제할까요? 모든 요일에서 삭제됩니다.')){
         recurring.splice(idx,1);
         save();render();renderManageLists();
       }
     };
-    // Mouse drag
-    row.addEventListener('dragstart',function(e){_dragIdx=idx;_dragEl=row;row.classList.add('dragging');e.dataTransfer.effectAllowed='move';});
-    row.addEventListener('dragend',function(){row.classList.remove('dragging');document.querySelectorAll('.drag-over').forEach(function(r){r.classList.remove('drag-over');});});
-    row.addEventListener('dragover',function(e){e.preventDefault();document.querySelectorAll('.drag-over').forEach(function(r){r.classList.remove('drag-over');});if(_dragIdx!==idx)row.classList.add('drag-over');});
-    row.addEventListener('drop',function(e){
-      e.preventDefault();row.classList.remove('drag-over');
-      if(_dragIdx===null||_dragIdx===idx)return;
-      var moved=recurring.splice(_dragIdx,1)[0];recurring.splice(idx,0,moved);
-      _dragIdx=null;save();render();renderManageLists();
-    });
-    // Touch drag
-    var touchStartY=0;
-    row.addEventListener('touchstart',function(e){
-      touchStartY=e.touches[0].clientY;_dragIdx=idx;_dragEl=row;row.classList.add('dragging');
-    },{passive:true});
-    row.addEventListener('touchmove',function(e){
-      e.preventDefault();
-      var touch=e.touches[0];
-      var els=document.elementsFromPoint(touch.clientX,touch.clientY);
-      var over=els.find(function(x){return x.classList&&x.classList.contains('edit-row')&&x!==row;});
-      document.querySelectorAll('.drag-over').forEach(function(r){r.classList.remove('drag-over');});
-      if(over){over.classList.add('drag-over');_touchTarget=over;}else{_touchTarget=null;}
-    },{passive:false});
-    row.addEventListener('touchend',function(){
-      row.classList.remove('dragging');
-      if(_touchTarget){
-        var targetIdx=+_touchTarget.getAttribute('data-idx');
-        _touchTarget.classList.remove('drag-over');
-        if(_dragIdx!==null&&_dragIdx!==targetIdx){
-          var moved2=recurring.splice(_dragIdx,1)[0];recurring.splice(targetIdx,0,moved2);
-          save();render();renderManageLists();
-        }
-      }
-      _dragIdx=null;_touchTarget=null;
-    },{passive:true});
     list.appendChild(row);
   });
 }
@@ -910,7 +858,6 @@ function checkWeekComplete(){
 
 // ── ADD/DELETE ──
 function addRecurring(){
-  if(parentPin&&!isParentUnlocked){alert('부모 설정 잠금이 설정되어 있어요.');return;}
   var name=document.getElementById('rName').value.trim();if(!name)return;
   var days=[...document.querySelectorAll('#rPills .dpill.sel')].map(function(p){return +p.dataset.i;});
   if(!days.length){alert('요일을 선택해주세요!');return;}
@@ -931,12 +878,11 @@ function addRecurring(){
   if(editMode)renderManageLists();
 }
 function addOneoff(){
-  if(parentPin&&!isParentUnlocked){alert('부모 설정 잠금이 설정되어 있어요.');return;}
   var name=document.getElementById('oName').value.trim();
   var date=document.getElementById('oDate').value;
   if(!name||!date){alert('이름과 날짜를 모두 입력해주세요!');return;}
   var oid=Date.now()+'';
-  oneoffs.push({name:name,date:date,oid:oid});
+  oneoffs.unshift({name:name,date:date,oid:oid});
   document.getElementById('oName').value='';
   save();render();
   if(editMode)renderManageLists();
@@ -975,7 +921,6 @@ updateProfileUI();
 document.getElementById('oDate').value=iso(new Date());
 document.getElementById('sfxFab').textContent=sfxEnabled?'🔊':'🔇';
 document.getElementById('sfxFab').className='fab '+(sfxEnabled?'fab-pink':'fab-gray');
-if(parentPin) document.getElementById('addPanels').style.display='none';
 setMode('week');
 </script>
 </body>
