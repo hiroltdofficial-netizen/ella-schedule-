@@ -352,6 +352,8 @@ const DEFAULT_RECURRING=[
 let recurring=JSON.parse(localStorage.getItem('ella_rec')||'null')||JSON.parse(JSON.stringify(DEFAULT_RECURRING));
 let oneoffs=JSON.parse(localStorage.getItem('ella_one')||'[]');
 let checks=JSON.parse(localStorage.getItem('ella_chk')||'{}');
+// recurringSkips: {taskName: [isoDate, ...]} — 반복일정 중 특정 날짜만 건너뜀
+let recurringSkips=JSON.parse(localStorage.getItem('ella_skips')||'{}');
 let badges=JSON.parse(localStorage.getItem('ella_badges')||'[]');
 let currentTheme=localStorage.getItem('ella_theme')||'pink';
 let profileName=localStorage.getItem('ella_pname')||'Ella';
@@ -371,6 +373,7 @@ function save(){
   localStorage.setItem('ella_one',JSON.stringify(oneoffs));
   localStorage.setItem('ella_chk',JSON.stringify(checks));
   localStorage.setItem('ella_badges',JSON.stringify(badges));
+  localStorage.setItem('ella_skips',JSON.stringify(recurringSkips));
 }
 
 // ── AUDIO ──
@@ -459,7 +462,14 @@ function fmt(d){return(d.getMonth()+1)+'/'+d.getDate();}
 function getTasksForDate(dt){
   var dow=(dt.getDay()+6)%7,isoStr=iso(dt);
   var r=recurring
-    .filter(function(t){return t.days.includes(dow)&&(!t.startDate||isoStr>=t.startDate);})
+    .filter(function(t){
+      if(!t.days.includes(dow)) return false;
+      if(t.startDate && isoStr<t.startDate) return false;
+      // 해당 날짜가 skip 목록에 있으면 제외
+      var skips=recurringSkips[t.name]||[];
+      if(skips.includes(isoStr)) return false;
+      return true;
+    })
     .map(function(t){return {name:t.name,id:'r:'+t.name,rname:t.name,recurring:true};});
   var o=oneoffs
     .filter(function(t){return t.date===isoStr;})
@@ -544,25 +554,23 @@ function renderWeek(){
           var xBtn=document.createElement('button');
           xBtn.style.cssText='position:absolute;top:2px;right:2px;width:16px;height:16px;border-radius:50%;background:#DC2626;border:none;color:#fff;font-size:10px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;padding:0;z-index:2';
           xBtn.textContent='✕';
-          (function(taskObj,isoStr2,dow2){
+          (function(taskObj,isoStr2){
             xBtn.onclick=function(e){
               e.stopPropagation();
               if(taskObj.recurring){
-                // Delete only this day from this recurring task
-                var rec=recurring.find(function(r){return r.name===taskObj.rname;});
-                if(rec){
-                  rec.days=rec.days.filter(function(d2){return d2!==dow2;});
-                  if(rec.days.length===0) recurring=recurring.filter(function(r){return r.name!==taskObj.rname;});
+                // 이 날짜만 skip 추가 — 다음 주는 그대로 유지
+                if(!recurringSkips[taskObj.rname]) recurringSkips[taskObj.rname]=[];
+                if(!recurringSkips[taskObj.rname].includes(isoStr2)){
+                  recurringSkips[taskObj.rname].push(isoStr2);
                 }
               } else {
                 oneoffs=oneoffs.filter(function(o){return o.oid!==taskObj.oid;});
               }
-              // Clear check for this task
               delete checks[ck(isoStr2,taskObj.id)];
               save();render();
               if(editMode)renderManageLists();
             };
-          })(t,dd.isoStr,d);
+          })(t,dd.isoStr);
           cell.appendChild(xBtn);
         }
         // Click handler (check/uncheck) — only when not in edit mode
